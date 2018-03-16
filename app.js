@@ -1,16 +1,16 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
+var favicon = require('serve-favicon'); // Node.js middleware for serving a favicon, a visual cue that client software, like browsers, use to identify a site.
+var logger = require('morgan'); // HTTP request logger middleware for node.js
 var session = require('express-session');
 var config = require('config');
 
 var app = express();
 
 // View engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'views')); // tells node where to find the .ejs files
 app.set('view engine', 'ejs');
-app.locals.title = 'Pedigree Browser';
+app.locals.title = 'Family Calendar';
 
 // Allow the app to be run behind proxies. The app will detect when it's behind
 // a proxy and properly configure https and other settings based on the user's
@@ -39,7 +39,7 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Make the session available in templates and default to an empty object. If we
-// don't default to an empty object then we would have to check for its 
+// don't default to an empty object then we would have to check for its
 // existence before accessing data in templates.
 app.use(function(req, res, next){
   res.locals.session = req.session || {};
@@ -62,7 +62,7 @@ app.use(function(req, res, next) {
 
 // Error handler
 app.use(function(err, req, res, next) {
-  
+
   // Set locals (template variables)
   // Only provide the error details in development
   res.locals.message = err.message;

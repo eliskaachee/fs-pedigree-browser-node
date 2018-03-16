@@ -1,7 +1,14 @@
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-image: url("/tree_photo.jpeg");
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
+.text-center {
+
+}
 a {
   color: #00B7FF;
 }
@@ -24,6 +31,14 @@ nav a:hover {
   margin: auto;
 }
 
+.text-center {
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 60px;
+  padding: 40px;
+  background: rgba(256, 256, 256, 0.8);
+}
 /* pedigree */
 
 .person {
