@@ -1,0 +1,21 @@
+diff a/middleware/fs-client.js b/middleware/fs-client.js	(rejected hunks)
+@@ -13,14 +13,14 @@
+       appKey: config.get('FS.appKey'),
+       redirectUri: domain + '/oauth-redirect'
+     });
+-    
++
+     // Load the token if it's saved in the session
+     if(req.session && req.session.fs_token){
+       req.fs.setAccessToken(req.session.fs_token);
+     }
+-  } catch(e){ 
++  } catch(e){
+     return next(e);
+   }
+-  
++
+   next();
+-};
+\ No newline at end of file
++};
