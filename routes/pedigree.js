@@ -20,23 +20,23 @@ router.get('/', function(req, res){
 // Download a person's 2-generation pedigree and a list of their children. Then
 // fetch portrait URLs for all those people.
 router.get('/:personId', function(req, res, next) {
-  
+
   var fs = req.fs,
       personId = req.params.personId;
-  
+
   // http://caolan.github.io/async/docs.html#autoInject
   // async.autoInject is an easy way for us to specify and manage dependencies
   // between asynchronous tasks.
   async.autoInject({
-    
+
     // Fetch the person's ancestry. We ask for 2 generations which includes the
     // root person, their parents, and their grandparents (meaning the generations
     // parameter doesn't count the root person as a generation).
     ancestry: function(callback){
-      
+
       // https://familysearch.org/developers/docs/api/tree/Ancestry_resource
-      fs.get('/platform/tree/ancestry?generations=2&person=' + personId, function(error, response){
-        
+      fs.get('/platform/tree/ancestry?generations=5&person=' + personId, function(error, response){
+
         // When requesting a person's ancestry, anything other than an HTTP 200
         // is unexpected and thus we treat it as an error.
         //
@@ -46,12 +46,12 @@ router.get('/:personId', function(req, res, next) {
         if(error || response.statusCode !== 200){
           return callback(error || restError(response));
         }
-        
+
         // Persons returned by the Ancestry resource will include an
         // ascendancyNumber number in their display block. This is an ahnentafel
         // number (Google it) that tells us the person's position in the
-        // pedigree. To make the pedigree display easy and fast, we add the 
-        // people to a map keyed by that ahnentafel number. Then the pedigree 
+        // pedigree. To make the pedigree display easy and fast, we add the
+        // people to a map keyed by that ahnentafel number. Then the pedigree
         // template can quickly load a person for a position by looking to see
         // if that position's number exists as a key in the ancestry map.
         // This is a O(n) operation.
@@ -65,90 +65,90 @@ router.get('/:personId', function(req, res, next) {
         response.data.persons.forEach(function(person){
           ancestry[person.display.ascendancyNumber] = person;
         });
-        
+
         // Notify async.autoInject that we're done with this task and give it
         // the ancestry data so that the data is available for later tasks.
         callback(null, ancestry);
       });
     },
-    
-    
+
+
     // Fetch the person's children.
     children: function(callback){
-      
+
       // https://familysearch.org/developers/docs/api/tree/Children_of_a_Person_resource
       fs.get(`/platform/tree/persons/${personId}/children`, function(error, response){
-        
-        // Error handling. 
+
+        // Error handling.
         if(error || response.statusCode >= 400){
           return callback(error || restError(response));
         }
-        
+
         // If a person has no children then the API will reply with an HTTP 204
         // and an empty body so we check for that case and default to an empty
         // array.
         callback(null, response.data ? response.data.persons : []);
       });
     },
-    
+
     // Fetch the persons' portraits. Notice there are three parameters in the
     // function definition for this task as opposed to one parameter being used
     // in the tasks above. The additional `ancestry` and `children` parameters
     // establish a dependency on those tasks and make the data returned by
     // them available to this task.
     portraits: function(ancestry, children, autoCallback){
-      
+
       // The portraits must be fetched one at a time so we use a queue.
       // http://caolan.github.io/async/docs.html#queue
       var q = async.queue(function(person, queueCallback){
-        
+
         // https://familysearch.org/developers/docs/api/tree/Person_Memories_Portrait_resource
         fs.get('/platform/tree/persons/' + person.id + '/portrait', function(error, response){
-          
+
           // We don't handle errors here because missing the portrait is not fatal.
           // We just check to see if a response is available and whether a
           // portrait URL exists.
           //
-          // If missing the portrait is a fatal condition for your app then you 
+          // If missing the portrait is a fatal condition for your app then you
           // would need to handle the error. At the very least you may choose to
           // log the error.
           if(response && response.headers.location){
-            
+
             // We chose to store the portrait URL in the person's display
             // properties because the person objects are already available in the
             // template and because the portrait is only used for display.
             person.display.portrait = response.headers.location;
           }
-          
+
           // Notify the queue that we're done fetching this portrait
           queueCallback();
         });
       });
-      
+
       // When the queue is drained (all tasks have been handled) we notify
       // async.autoInject that we're done by calling the callback it provided.
       q.drain = function(){
         autoCallback();
       };
-      
+
       // Now that our queue is configured we can load it up with tasks. Tasks can
       // be anything. We have chosen here to use the person objects because they
       // include the person Id, which is required for portrait requests, and
       // because we will store the portrait URL in the person's display properties.
-      
+
       // Remember ancestors are stored in a map so we iterate over them and add
       // ancestors one at a time.
       for(var a in ancestry){
         q.push(ancestry[a]);
       }
-      
+
       // Children are stored in an array and q.push() accepts arrays for bulk
       // enqueuing so we add all of the children at once.
       q.push(children);
     }
-    
+
   }, function(error, results){
-    
+
     // At this point async.autoInject has finished processing the tasks.
     // If there's an error we pass it on to express which will display the error
     // on the error page. If we successfully retrieved all the data then we

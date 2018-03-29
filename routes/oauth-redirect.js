@@ -10,19 +10,19 @@ router.use(require('../middleware/fs-client'));
 // params, exchanges the code for an access token, and forward the user to the
 // pedigree page. If there's an error, the user will be sent to the error page.
 router.get('/', function(req, res, next) {
-  
+
   // Exchange the code for an access token and handle the response.
   // https://familysearch.org/developers/docs/api/authentication/Authorization_resource
   req.fs.oauthToken(req.query.code, function(error, tokenResponse){
-    
+
     // error will be set when there was a networking error (i.e. the request
     // didn't make it to the FS API or we didn't receive the response from the
-    // API). If we did get a response then we still check the status code 
+    // API). If we did get a response then we still check the status code
     // to make sure the user successfully signed in.
     if(error || tokenResponse.statusCode >= 400){
       return next(error || restError(tokenResponse));
     }
-    
+
     // At this point we've verified that the user successfully sign in so we
     // save the access token in the session and forward the user on to the
     // pedigree page. We need to save the access token so that we can setup
