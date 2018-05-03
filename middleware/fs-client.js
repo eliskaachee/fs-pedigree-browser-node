@@ -12,7 +12,7 @@ module.exports = function(req, res, next){
       environment: config.get('FS.environment'),
       appKey: config.get('FS.appKey'),
       // redirectUri: domain + '/oauth-redirect'
-      redirectUri: 'localhost:3000/oauth-redirect'
+      redirectUri: 'http://localhost:3000/oauth-redirect' // this is for testing locally
     });
 
     // Load the token if it's saved in the session
