@@ -17,7 +17,6 @@ module.exports = function(req, res, next){
 
     // Load the token if it's saved in the session
     if(req.session && req.session.fs_token){
-      console.log("SESSION VARIABLE: ", req.session.fs_token);
       req.fs.setAccessToken(req.session.fs_token);
     }
   } catch(e){

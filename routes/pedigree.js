@@ -66,22 +66,26 @@ router.get('/:personId', function(req, res, next) {
         //   console.log("PERSON: ", person);
         //   ancestry[person.display.ascendancyNumber] = person;
         // });
-        var dates = {};
+        var dates = [];
         response.data.persons.forEach(function(person) {
-          console.log("PERSON: ", person.display.name);
+          // console.log("PERSON: ", person.display.name);
           //Get birth date
           if(person.display.birthDate) {
-            console.log("Birth Date: " + person.display.birthDate);
+            // console.log("Birth Date: " + new Date(person.display.birthDate));
+            dates.push({name: person.display.name, date: new Date(person.display.birthDate), type: 'birth'});
           }
           //Get marriage date
           if(person.display.marriageDate) {
-            console.log("Marriage Date: " + person.display.marriageDate);
+            // console.log("Marriage Date: " + new Date(person.display.marriageDate));
+            dates.push({name: person.display.name, date: new Date(person.display.marriageDate), type: 'marriage'});
           }
           //Get death date
           if(person.display.deathDate) {
-            console.log("Death Date: " + person.display.deathDate);
+            // console.log("Death Date: " + new Date(person.display.deathDate));
+            dates.push({name: person.display.name, date: new Date(person.display.deathDate), type: 'death'});
           }
         })
+        console.log("Dates: ", dates);
         // Notify async.autoInject that we're done with this task and give it
         // the ancestry data so that the data is available for later tasks.
         callback(null, dates);
