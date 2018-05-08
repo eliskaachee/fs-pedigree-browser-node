@@ -14,7 +14,7 @@ router.use(require('../middleware/fs-session'));
 // only one route handler for the pedigree but it also makes the URL easier
 // for the user to understand and share.
 router.get('/', function(req, res){
-  res.redirect('/pedigree/' + req.session.user.personId);
+  res.redirect('/calendar/' + req.session.user.personId);
 });
 
 // Download a person's 2-generation pedigree and a list of their children. Then
@@ -32,7 +32,7 @@ router.get('/:personId', function(req, res, next) {
     // Fetch the person's ancestry. We ask for 2 generations which includes the
     // root person, their parents, and their grandparents (meaning the generations
     // parameter doesn't count the root person as a generation).
-    ancestry: function(callback){
+    dates: function(callback){
 
       // https://familysearch.org/developers/docs/api/tree/Ancestry_resource
       fs.get('/platform/tree/ancestry?generations=3&person=' + personId + "&personDetails=true&marriageDetails=true", function(error, response){
@@ -72,20 +72,20 @@ router.get('/:personId', function(req, res, next) {
           //Get birth date
           if(person.display.birthDate) {
             // console.log("Birth Date: " + new Date(person.display.birthDate));
-            dates.push({name: person.display.name, date: new Date(person.display.birthDate), type: 'birth'});
+            dates.push({'name': person.display.name, 'date': new Date(person.display.birthDate), 'type': 'birth'});
           }
           //Get marriage date
           if(person.display.marriageDate) {
             // console.log("Marriage Date: " + new Date(person.display.marriageDate));
-            dates.push({name: person.display.name, date: new Date(person.display.marriageDate), type: 'marriage'});
+            dates.push({'name': person.display.name, 'date': new Date(person.display.marriageDate), 'type': 'marriage'});
           }
           //Get death date
           if(person.display.deathDate) {
             // console.log("Death Date: " + new Date(person.display.deathDate));
-            dates.push({name: person.display.name, date: new Date(person.display.deathDate), type: 'death'});
+            dates.push({'name': person.display.name, 'date': new Date(person.display.deathDate), 'type': 'death'});
           }
         })
-        console.log("Dates: ", dates);
+        // console.log("Dates: ", dates);
         // Notify async.autoInject that we're done with this task and give it
         // the ancestry data so that the data is available for later tasks.
         callback(null, dates);
@@ -103,7 +103,8 @@ router.get('/:personId', function(req, res, next) {
     if(error){
       next(error);
     } else {
-      res.render('pedigree', results);
+      console.log(results.dates);
+      res.render('calendar', {'dates': results.dates});
     }
   });
 });

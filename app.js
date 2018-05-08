@@ -25,7 +25,7 @@ app.set('trust proxy', true);
 //
 // We use the session to store the FS access token and the current user data.
 app.use(session({
-  secret: 'pedigree browser session secret',
+  secret: 'calendar browser session secret',
   resave: false,
   saveUninitialized: false,
   cookie: { secure: config.get('session.cookie.secure') }
@@ -47,11 +47,11 @@ app.use(function(req, res, next){
 });
 
 // Attach routes
-app.use('/', require('./routes/index'));
+app.use('/', require('./routes/logged-out'));
 app.use('/signin', require('./routes/signin'));
 app.use('/signout', require('./routes/signout'));
 app.use('/oauth-redirect', require('./routes/oauth-redirect'));
-app.use('/pedigree', require('./routes/pedigree'));
+app.use('/calendar', require('./routes/calendar'));
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {
