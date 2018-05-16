@@ -11,9 +11,28 @@
   </head>
   <body>
     <div id="main">
-      <p>Name: <%-dates[0].name%></p>
-      <p>Date: <%-dates[0].date%></p>
-      <p>Type: <%-dates[0].type%></p>
+      <%- calendar[0].monthName %>
+      <% for(var month in calendar) { %>
+        <div class="month">
+        <% for(var day in calendar[month].dates) { %>
+          <div class="day">
+          <% for(var event in calendar[month].dates[day]) { %>
+            <%- calendar[month].dates[day][event].name %>
+            <% if(calendar[month].dates[day][event].type === 'birth') { %>
+              was born today in 
+            <% } else if(calendar[month].dates[day][event].type === 'marriage') { %>
+              were married today in 
+            <% } else { %>
+              died today in 
+            <% } %>
+            <%- calendar[month].dates[day][event].year %>
+            <%- calendar[month].monthName %>
+            <%- calendar[month].dates[day][event].day %>
+          <% } %>
+        </div> <!-- end of day -->
+        <% } %>
+      </div> <!-- end of month -->
+      <% } %>
     </div>
   </body>
   </html>
