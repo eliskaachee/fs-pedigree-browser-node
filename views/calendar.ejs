@@ -11,28 +11,41 @@
   </head>
   <body>
     <div id="main">
-      <%- calendar[0].monthName %>
       <% for(var month in calendar) { %>
         <div class="month">
-        <% for(var day in calendar[month].dates) { %>
-          <div class="day">
-          <% for(var event in calendar[month].dates[day]) { %>
-            <%- calendar[month].dates[day][event].name %>
-            <% if(calendar[month].dates[day][event].type === 'birth') { %>
-              was born today in 
-            <% } else if(calendar[month].dates[day][event].type === 'marriage') { %>
-              were married today in 
-            <% } else { %>
-              died today in 
+          <h1><%- calendar[month].monthName %></h1>
+          <div class="week">
+            <% for(var day = 1; day <= calendar[month].numDaysInMonth; day++) { %>
+              <!-- check to see if it would be the end of the week based on the offset of the first day of the month -->
+              <% if((day + calendar[month].firstDayOfMonth - 1) % 7 === 0) { %>
+                </div>
+                <div class="week">
+              <% } %>
+              <div class="day">
+                <% for (var dayWithEvents in calendar[month].dates) {
+                  if((' ' + day) === dayWithEvents) { %>
+                    <% for(var event in calendar[month].dates[dayWithEvents]) { %>
+                      <div class="event">
+                        <%- calendar[month].dates[dayWithEvents][event].name %>
+                        <% if(calendar[month].dates[dayWithEvents][event].type === 'birth') { %>
+                          was born today in 
+                        <% } else if(calendar[month].dates[dayWithEvents][event].type === 'marriage') { %>
+                          were married today in 
+                        <% } else { %>
+                          died today in 
+                        <% } %>
+                        <%- calendar[month].dates[dayWithEvents][event].year %>
+                        <%- calendar[month].monthName %>
+                        <%- calendar[month].dates[dayWithEvents][event].day %>
+                      </div> <!-- end of event -->
+                    <% } %>
+                  <% } %>
+                <% } %>
+              </div> <!-- end of day -->
             <% } %>
-            <%- calendar[month].dates[day][event].year %>
-            <%- calendar[month].monthName %>
-            <%- calendar[month].dates[day][event].day %>
-          <% } %>
-        </div> <!-- end of day -->
-        <% } %>
-      </div> <!-- end of month -->
+          </div> <!-- end of week -->
+        </div> <!-- end of month -->
       <% } %>
     </div>
   </body>
-  </html>
+</html>

@@ -4,20 +4,7 @@ var restError = require('../lib/rest-error');
 var async = require('async');
 var util = require('util');
 // Holds the calendar dates
-var calendar = [
-  {'monthName': 'January', dates:{}},
-  {'monthName': 'February', dates:{}},
-  {'monthName': 'March', dates:{}},
-  {'monthName': 'April', dates:{}},
-  {'monthName': 'May', dates:{}},
-  {'monthName': 'June', dates:{}},
-  {'monthName': 'July', dates:{}},
-  {'monthName': 'August', dates:{}},
-  {'monthName': 'September', dates:{}},
-  {'monthName': 'October', dates:{}},
-  {'monthName': 'November', dates:{}},
-  {'monthName': 'December', dates:{}}
-];
+var calendar;
 
 // Setup the FS sdk client before handling any requests on this router.
 router.use(require('../middleware/fs-client'));
@@ -28,6 +15,32 @@ router.use(require('../middleware/fs-session'));
 router.get('/', function(req, res){
   res.redirect('/calendar/' + req.session.user.personId);
 });
+
+function setUpCalendar() {
+  calendar = [
+    {'monthName': 'January',   'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'February',  'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'March',     'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'April',     'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'May',       'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'June',      'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'July',      'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'August',    'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'September', 'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'October',   'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'November',  'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
+    {'monthName': 'December',  'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}}
+  ];
+  for(month in calendar) {
+    var date = new Date();
+    var currentMonth = Number(month);
+    var year = date.getFullYear();
+    var numDaysInMonth = new Date(year, currentMonth + 1, 0).getDate();
+    var firstDayOfMonth = new Date(year, currentMonth, 1).getDay();
+    calendar[month].numDaysInMonth = numDaysInMonth;
+    calendar[month].firstDayOfMonth = firstDayOfMonth;
+  }
+}
 
 function isValid(dateString) {
   
@@ -42,7 +55,6 @@ Organizes the events by date and pushes them into the calendar, indexed by
 day inside the proper month.
 */
 function addEventToCalendar(name, date, ascendancyNumber, gender, type) {
-  console.log(name + " " + date + " " + type);
   var eventDate = new Date(date);
   var eventInfo = {
     'name': name,
@@ -55,23 +67,24 @@ function addEventToCalendar(name, date, ascendancyNumber, gender, type) {
     'type': type
   };
   
-  var dateString = ' ' + eventInfo.day;
-  if(!calendar[eventDate.getMonth()].dates[dateString]) {
-    calendar[eventDate.getMonth()].dates[dateString] = [];
-    calendar[eventDate.getMonth()].dates[dateString].push(eventInfo);
+  var dayString = ' ' + eventInfo.day;
+  // if there is not already a date 
+  if(!calendar[eventDate.getMonth()].dates[dayString]) {
+    calendar[eventDate.getMonth()].dates[dayString] = [];
+    calendar[eventDate.getMonth()].dates[dayString].push(eventInfo);
   } else {
     // if there is already a marriage event in the calendar for their spouse
     if(type === "marriage") {
-      for (var event in calendar[eventDate.getMonth()].dates[dateString]) {
+      for (var event in calendar[eventDate.getMonth()].dates[dayString]) {
         // if there is a match
-        if ((Math.floor(calendar[eventDate.getMonth()].dates[dateString][event].ascendancyNumber / 2) === Math.floor(ascendancyNumber / 2)) && (calendar[eventDate.getMonth()].dates[dateString][event].type === "marriage")){
-          calendar[eventDate.getMonth()].dates[dateString][event].name += (" and " + name);
-        } else {
-          calendar[eventDate.getMonth()].dates[dateString].push(eventInfo);
+        if ((Math.floor(calendar[eventDate.getMonth()].dates[dayString][event].ascendancyNumber / 2) === Math.floor(ascendancyNumber / 2)) && (calendar[eventDate.getMonth()].dates[dayString][event].type === "marriage")){
+          calendar[eventDate.getMonth()].dates[dayString][event].name += (" and " + name);
+        } else { // it is a marriage event that is not in the calendar yet
+          calendar[eventDate.getMonth()].dates[dayString].push(eventInfo);
         }
       }
     } else { // it is a birth or death event
-      calendar[eventDate.getMonth()].dates[dateString].push(eventInfo);
+      calendar[eventDate.getMonth()].dates[dayString].push(eventInfo);
     }
   }
 }
@@ -89,6 +102,7 @@ router.get('/:personId', function(req, res, next) {
         if(error || response.statusCode !== 200){
           return callback(error || restError(response));
         }
+        setUpCalendar();
         response.data.persons.forEach(function(person) {
           //Get birth date
           if(person.display.birthDate) {
