@@ -16,6 +16,10 @@ router.get('/', function(req, res){
   res.redirect('/calendar/' + req.session.user.personId);
 });
 
+/**
+* Creates the basic calendar object and calculates the number of days in the month
+* and the offset of the first day of the month. The "date" array is filled in later. 
+**/
 function setUpCalendar() {
   calendar = [
     {'monthName': 'January',   'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
@@ -42,18 +46,24 @@ function setUpCalendar() {
   }
 }
 
+/**
+* Determines if the date has a day, month, and year. Without this, the default
+* value is used, and the calendar prints out wrong. If the date is not valid,
+* the event is not displayed in the calendar.
+**/
 function isValid(dateString) {
-  
   var splitDateString = dateString.split(" ");
   if(!splitDateString[0] || !splitDateString[1] || !splitDateString[2]) {
     return false;
   }
   return true;
 }
+
 /**
-Organizes the events by date and pushes them into the calendar, indexed by
-day inside the proper month.
-*/
+* Organizes the events by date and pushes them into the calendar, indexed by
+* day inside the proper month.
+* It also handles marriage events by preventing the event from being printed twice
+**/
 function addEventToCalendar(name, date, ascendancyNumber, gender, type) {
   var eventDate = new Date(date);
   var eventInfo = {
