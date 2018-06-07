@@ -13,7 +13,9 @@
     <script src="/js/pdf-generator.js"></script>
   </head>
   <body>
-    <button onclick="generate()">Generate PDF</button>
+    <div id="overlay-message">
+      <button onclick="generate()">Generate PDF</button>
+    </div>
     <div id="main">
       <% for(var month in calendar) { %>
         <div class="top-page page">
@@ -21,7 +23,6 @@
         </div>
         <div class="bottom-page page" style="background-image: url('/top-photos-originals/<%- calendar[month].monthName %>.jpg')">
         <div class="month">
-          <h1 class="month-title"><%- calendar[month].monthName %></h1>
           <div class="week">
             <% for(var fillerDay = 0; fillerDay < calendar[month].firstDayOfMonth; fillerDay++) { %>
               <div class="day"></div>
@@ -33,23 +34,31 @@
                 <div class="week">
               <% } %>
               <div class="day">
-                <span class="dayNumber"><%- day %></span>
+                <span class="dayNumber"><%- day %>
                 <% for (var dayWithEvents in calendar[month].dates) {
                   if((' ' + day) === dayWithEvents) { %>
-                    <% for(var event in calendar[month].dates[dayWithEvents]) { 
-                      if(event < 2) { %>
+                    <% for(var event in calendar[month].dates[dayWithEvents]) { %>
+                      <!-- This handles main holidays, so the are next to the date number. There will be a maximum of one per day, and it will always be listed first -->
+                      <% if((event == 0) && (calendar[month].dates[dayWithEvents][event].type === 'holiday')) { %>
+                        <%- calendar[month].dates[dayWithEvents][event].name %></span>
+                      <% } else { %>
+                      </span>
+                      <% if(event < 2) { %>
                       <div class="event">
                         <%- calendar[month].dates[dayWithEvents][event].name %>
                         <% if(calendar[month].dates[dayWithEvents][event].type === 'birth') { %>
                           was born today in 
                         <% } else if(calendar[month].dates[dayWithEvents][event].type === 'marriage') { %>
                           were married today in 
-                        <% } else { %>
+                        <% } else if(calendar[month].dates[dayWithEvents][event].type === 'death') { %>
                           died today in 
+                        <% } else if(calendar[month].dates[dayWithEvents][event].type === 'church-history') { %>
+                          in 
                         <% } %>
                         <%- calendar[month].dates[dayWithEvents][event].year %>
                       </div> <!-- end of event -->
                       <% } %>
+                    <% } %>
                     <% } %>
                   <% } %>
                 <% } %>
