@@ -12,7 +12,7 @@ router.use(require('../middleware/fs-client'));
 // Make sure the user is signed in before handling any requests on this router.
 router.use(require('../middleware/fs-session'));
 
-router.get('/', function(req, res){
+router.get('/calendar', function(req, res){
   res.redirect('/calendar/' + req.session.user.personId);
 });
 
@@ -44,36 +44,33 @@ function setUpCalendar() {
     calendar[month].numDaysInMonth = numDaysInMonth;
     calendar[month].firstDayOfMonth = firstDayOfMonth;
   }
-  var displayHolidays = true;
-  if(displayHolidays) {
-    // The year could be anything, but it looks for a three part year, so something has to be there
-    addEventToCalendar("New Year's Day", "1 January 0000", null, null, "holiday");
-    addEventToCalendar("Independence Day", "4 July 0000", null, null, "holiday");
-    addEventToCalendar("Veterans Day", "11 November 0000", null, null, "holiday");
-    // TODO: Calculate Thanksgiving Day, Memorial Day, Father's Day, and Mother's Day
-    // addEventToCalendar("Thanksgiving Day", thanksgivingDay + " November 0000", null, null, "holiday");
-    addEventToCalendar("Christmas Eve", "24 December 0000", null, null, "holiday");
-    addEventToCalendar("Christmas Day", "25 December 0000", null, null, "holiday");
-  }
 }
 
-function addChurchHistoryEvents() {
-  var displayChurchHistoryDates = true;
-  if(displayChurchHistoryDates) {
-    addEventToCalendar("Joseph Smith was born",                     "23 December 1805",  null, null, "church-history");
-    addEventToCalendar("Joseph Smith is visited by Moroni",         "21 September 1823", null, null, "church-history");
-    addEventToCalendar("Joseph Smith married Emma Hale",            "18 January 1827",   null, null, "church-history");
-    addEventToCalendar("Joseph Smith received the Golden Plates",   "22 September 1827", null, null, "church-history");
-    addEventToCalendar("Aaronic Priesthood Restored",               "15 May 1829",       null, null, "church-history");
-    addEventToCalendar("First publication of the Book of Mormon",   "26 March 1830",     null, null, "church-history");
-    addEventToCalendar("The Church was organized",                  "6 April 1830",      null, null, "church-history");
-    addEventToCalendar("The Kirtland Temple was dedicated",         "27 March 1836",     null, null, "church-history");
-    addEventToCalendar("Sealing Keys restored in Kirtland Temple",  "3 April 1836",      null, null, "church-history");
-    addEventToCalendar("Doctrine of baptism for the dead revealed", "15 August 1840",    null, null, "church-history");
-    addEventToCalendar("Relief Society Organized",                  "17 March 1842",     null, null, "church-history");
-    addEventToCalendar("Martyrdom of Joseph and Hyrum Smith",       "27 June 1844",      null, null, "church-history");
-    addEventToCalendar("Brigham Young arrives in Salt Lake Valley", "24 July 1847",      null, null, "church-history");
-  }
+function addUSNationalHolidays() {
+  // The year could be anything, but it looks for a three part year, so something has to be there
+  addEventToCalendar("New Year's Day", "1 January 0000", null, null, "holiday");
+  addEventToCalendar("Independence Day", "4 July 0000", null, null, "holiday");
+  addEventToCalendar("Veterans Day", "11 November 0000", null, null, "holiday");
+  // TODO: Calculate Thanksgiving Day, Memorial Day, Father's Day, and Mother's Day
+  // addEventToCalendar("Thanksgiving Day", thanksgivingDay + " November 0000", null, null, "holiday");
+  addEventToCalendar("Christmas Eve", "24 December 0000", null, null, "holiday");
+  addEventToCalendar("Christmas Day", "25 December 0000", null, null, "holiday");
+}
+
+function addChurchHistoryDates() {
+  addEventToCalendar("Joseph Smith was born",                     "23 December 1805",  null, null, "church-history");
+  addEventToCalendar("Joseph Smith is visited by Moroni",         "21 September 1823", null, null, "church-history");
+  addEventToCalendar("Joseph Smith married Emma Hale",            "18 January 1827",   null, null, "church-history");
+  addEventToCalendar("Joseph Smith received the Golden Plates",   "22 September 1827", null, null, "church-history");
+  addEventToCalendar("Aaronic Priesthood Restored",               "15 May 1829",       null, null, "church-history");
+  addEventToCalendar("First publication of the Book of Mormon",   "26 March 1830",     null, null, "church-history");
+  addEventToCalendar("The Church was organized",                  "6 April 1830",      null, null, "church-history");
+  addEventToCalendar("The Kirtland Temple was dedicated",         "27 March 1836",     null, null, "church-history");
+  addEventToCalendar("Sealing Keys restored in Kirtland Temple",  "3 April 1836",      null, null, "church-history");
+  addEventToCalendar("Doctrine of baptism for the dead revealed", "15 August 1840",    null, null, "church-history");
+  addEventToCalendar("Relief Society Organized",                  "17 March 1842",     null, null, "church-history");
+  addEventToCalendar("Martyrdom of Joseph and Hyrum Smith",       "27 June 1844",      null, null, "church-history");
+  addEventToCalendar("Brigham Young arrives in Salt Lake Valley", "24 July 1847",      null, null, "church-history");
 }
 
 /**
@@ -130,7 +127,7 @@ function addEventToCalendar(name, date, ascendancyNumber, gender, type) {
 }
 
 router.get('/:personId', function(req, res, next) {
-
+console.log("QUERY: ", req.query);
   var fs = req.fs,
       personId = req.params.personId;
 
@@ -143,6 +140,9 @@ router.get('/:personId', function(req, res, next) {
           return callback(error || restError(response));
         }
         setUpCalendar();
+        if(req.query.USNationalHolidays) {
+          addUSNationalHolidays();
+        }
         response.data.persons.forEach(function(person) {
           //Get birth date
           if(person.display.birthDate) {
@@ -166,7 +166,9 @@ router.get('/:personId', function(req, res, next) {
         console.log("Calendar: ", JSON.stringify(calendar, null, 4));
         // Notify async.autoInject that we're done with this task and give it
         // the ancestry data so that the data is available for later tasks.
-        addChurchHistoryEvents();
+        if(req.query.churchHistoryDates) {
+          addChurchHistoryDates();
+        }
         callback(null, calendar);
       });
     }

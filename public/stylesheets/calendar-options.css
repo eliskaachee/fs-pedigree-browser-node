@@ -6,23 +6,6 @@ body {
   background-size: cover;
 }
 
-a {
-  color: #00B7FF;
-}
-
-nav {
-  background-color: #347a34;
-  color: white;
-}
-
-nav a,
-nav a:visited {
-  color: #fff;
-}
-nav a:hover {
-  color: #000;
-}
-
 .container {
   max-width: 1024px;
   margin: auto;
@@ -35,4 +18,8 @@ nav a:hover {
   margin-top: 60px;
   padding: 40px;
   background: rgba(256, 256, 256, 0.8);
+}
+
+.submit-button {
+  margin-top: 10px;
 }

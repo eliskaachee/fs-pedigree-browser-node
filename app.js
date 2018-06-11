@@ -52,6 +52,7 @@ app.use('/signin', require('./routes/signin'));
 app.use('/signout', require('./routes/signout'));
 app.use('/oauth-redirect', require('./routes/oauth-redirect'));
 app.use('/calendar', require('./routes/calendar'));
+app.use('/calendar-options', require('./routes/calendar-options'));
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {

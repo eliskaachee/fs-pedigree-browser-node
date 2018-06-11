@@ -29,7 +29,7 @@ router.get('/', function(req, res, next) {
     // an instance of the sdk on future requests.
     req.session.fs_token = tokenResponse.data.access_token;
     req.session.save(function(){
-      res.redirect('/calendar');
+      res.redirect('/calendar-options');
     });
   });
 });
