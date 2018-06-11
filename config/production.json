@@ -1,6 +1,6 @@
 {
   "FS": {
-    "environment": "production"
+    "environment": "integration"
   },
   "session": {
     "cookie": {
