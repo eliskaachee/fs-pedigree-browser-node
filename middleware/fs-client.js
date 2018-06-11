@@ -13,7 +13,7 @@ module.exports = function(req, res, next){
       appKey: config.get('FS.appKey'),
       // redirectUri: domain + '/oauth-redirect'
       // redirectUri: 'http://localhost:3000/oauth-redirect' // this is for testing locally
-      redirectUri: 'https://family-calendar-pdf.herokuapp.com//oauth-redirect'
+      redirectUri: 'https://family-calendar-pdf.herokuapp.com/oauth-redirect'
     });
 
     // Load the token if it's saved in the session
