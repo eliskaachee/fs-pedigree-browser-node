@@ -51,8 +51,13 @@ function addUSNationalHolidays() {
   addEventToCalendar("New Year's Day", "1 January 0000", null, null, "holiday");
   addEventToCalendar("Independence Day", "4 July 0000", null, null, "holiday");
   addEventToCalendar("Veterans Day", "11 November 0000", null, null, "holiday");
+  var mothersDay = new Date("May 8").getDate() - new Date("May 8").getDay() + 0;
+  addEventToCalendar("Mother's Day", mothersDay + " May 0000", null, null, "holiday");
+  var fathersDay = new Date("June 22").getDate() - new Date("June 22").getDay() + 0;
+  addEventToCalendar("Father's Day", fathersDay + " June 0000", null, null, "holiday");
   // TODO: Calculate Thanksgiving Day, Memorial Day, Father's Day, and Mother's Day
-  // addEventToCalendar("Thanksgiving Day", thanksgivingDay + " November 0000", null, null, "holiday");
+  var thanksgivingDay = new Date("November 22").getDate() - new Date("November 22").getDay() + 4;
+  addEventToCalendar("Thanksgiving Day", thanksgivingDay + " November 0000", null, null, "holiday");
   addEventToCalendar("Christmas Eve", "24 December 0000", null, null, "holiday");
   addEventToCalendar("Christmas Day", "25 December 0000", null, null, "holiday");
 }

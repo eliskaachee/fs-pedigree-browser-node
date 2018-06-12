@@ -3,7 +3,6 @@ var config = require('config');
 
 // Middleware that sets up the FS sdk.
 module.exports = function(req, res, next){
-  // console.log("NEXT: ", next);
   // We wrap it in a try/catch block because config will throw an exception
   // if the setting doesn't exist.
   try {
@@ -11,8 +10,8 @@ module.exports = function(req, res, next){
     req.fs = new FamilySearch({
       environment: config.get('FS.environment'),
       appKey: config.get('FS.appKey'),
-      redirectUri: domain + '/oauth-redirect'
-      // redirectUri: 'http://localhost:3000/oauth-redirect' // this is for testing locally
+      // redirectUri: domain + '/oauth-redirect'
+      redirectUri: 'http://localhost:3000/oauth-redirect' // this is for testing locally
     });
 
     // Load the token if it's saved in the session
