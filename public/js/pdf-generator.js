@@ -38,7 +38,6 @@ function generate() {
     function(pageArray) {
       var pdf = new jsPDF('landscape', 'mm', 'a4');
       for(var i = 0; i < pageArray.length; i++) {
-        console.log("page: " + i);
         pdf.addImage(pageArray[i], 'JPEG', 0, 0, 300, pdf.internal.pageSize.height);
         if(i < pageArray.length - 1) {
           pdf.addPage();
