@@ -11,8 +11,8 @@ module.exports = function(req, res, next){
     req.fs = new FamilySearch({
       environment: config.get('FS.environment'),
       appKey: config.get('FS.appKey'),
-      // redirectUri: domain + '/oauth-redirect'
-      redirectUri: 'http://localhost:3000/oauth-redirect' // this is for testing locally
+      redirectUri: domain + '/oauth-redirect'
+      // redirectUri: 'http://localhost:3000/oauth-redirect' // this is for testing locally
     });
 
     // Load the token if it's saved in the session
