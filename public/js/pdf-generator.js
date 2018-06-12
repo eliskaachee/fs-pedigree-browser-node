@@ -24,22 +24,28 @@ function grabPage(pageIndex) {
 * promises. The final PDF is saved in the user's downloads.
 **/
 function generate() {
-  document.getElementById('overlay-message').innerHTML = "Downloading . . .";
+  document.getElementsByClassName('overlay-message')[0].innerHTML = "Downloading . . .";
   // creates a promise for each calendar page, so they can load asyncronously and the pages stay in the same order.
-  var calendarPagePromiseArray = [grabPage(0), grabPage(1), grabPage(2), grabPage(3), grabPage(4), grabPage(5), grabPage(6), grabPage(7), grabPage(8), grabPage(9), grabPage(10), grabPage(11), grabPage(12), grabPage(13), grabPage(14), grabPage(15), grabPage(16), grabPage(17), grabPage(18), grabPage(19), grabPage(20), grabPage(21), grabPage(22), grabPage(23)];
+  var calendarPagePromiseArray = [grabPage(0),  grabPage(1),  grabPage(2),  grabPage(3), 
+                                  grabPage(4),  grabPage(5),  grabPage(6),  grabPage(7), 
+                                  grabPage(8),  grabPage(9),  grabPage(10), grabPage(11), 
+                                  grabPage(12), grabPage(13), grabPage(14), grabPage(15), 
+                                  grabPage(16), grabPage(17), grabPage(18), grabPage(19), 
+                                  grabPage(20), grabPage(21), grabPage(22), grabPage(23), 
+                                  grabPage(24), grabPage(25)];
   Promise.all(calendarPagePromiseArray).then(
     //if successful
     function(pageArray) {
       var pdf = new jsPDF('landscape', 'mm', 'a4');
-      // console.log("PAGE HEIGHT: " + pdf.internal.pageSize.height);   210.00197555866663(px?)
       for(var i = 0; i < pageArray.length; i++) {
+        console.log("page: " + i);
         pdf.addImage(pageArray[i], 'JPEG', 0, 0, 300, pdf.internal.pageSize.height);
         if(i < pageArray.length - 1) {
           pdf.addPage();
         }
       }
       pdf.save("myFamilyCalendar.pdf");
-      document.getElementById('overlay-message').innerHTML = "Done!";
+      document.getElementsByClassName('overlay-message')[0].innerHTML = "Done!";
     },
     // if not successful
     function(errorArray) {

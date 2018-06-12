@@ -11,7 +11,6 @@ router.use(require('../middleware/fs-client'));
 router.use(require('../middleware/fs-session'));
 
 router.get('/', function(req, res){
-  console.log(req);
   res.render('calendar-options', {'userId': req.session.user.personId});
 });
 

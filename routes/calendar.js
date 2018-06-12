@@ -132,7 +132,6 @@ function addEventToCalendar(name, date, ascendancyNumber, gender, type) {
 }
 
 router.get('/:personId', function(req, res, next) {
-console.log("QUERY: ", req.query);
   var fs = req.fs,
       personId = req.params.personId;
 
@@ -168,7 +167,7 @@ console.log("QUERY: ", req.query);
             }
           }
         })
-        console.log("Calendar: ", JSON.stringify(calendar, null, 4));
+        // console.log("Calendar: ", JSON.stringify(calendar, null, 4));
         // Notify async.autoInject that we're done with this task and give it
         // the ancestry data so that the data is available for later tasks.
         if(req.query.churchHistoryDates) {
