@@ -23,13 +23,15 @@
         </div>
         <div class="bottom-page page" style="background-image: url('/top-photos-originals/<%- calendar[month].monthName %>.jpg')">
         <div class="month">
+          <% var weekCount = 1; %>
           <div class="week">
             <% for(var fillerDay = 0; fillerDay < calendar[month].firstDayOfMonth; fillerDay++) { %>
               <div class="day"></div>
             <% } %>
             <% for(var day = 1; day <= calendar[month].numDaysInMonth; day++) { %>
               <!-- check to see if it would be the end of the week based on the offset of the first day of the month -->
-              <% if((day + calendar[month].firstDayOfMonth - 1) % 7 === 0) { %>
+              <% if((day + calendar[month].firstDayOfMonth - 1) % 7 === 0) { 
+                weekCount++; %>
                 </div>
                 <div class="week">
               <% } %>
@@ -72,6 +74,11 @@
               <div class="day"></div>
             <% } %>
           </div> <!-- end of week -->
+          <% if(weekCount < 6) { %>
+            <div class="filler-week">
+              <p>Notes:</p>
+            </div>
+          <% } %>
         </div> <!-- end of month -->
       </div>
       <% } %>
