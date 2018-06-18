@@ -25,6 +25,7 @@ function grabPage(pageIndex) {
 **/
 function generate() {
   document.getElementsByClassName('overlay-message')[0].innerHTML = "Downloading . . .";
+  // document.getElementById("loader").style.display = "block";
   // creates a promise for each calendar page, so they can load asyncronously and the pages stay in the same order.
   var calendarPagePromiseArray = [grabPage(0),  grabPage(1),  grabPage(2),  grabPage(3), 
                                   grabPage(4),  grabPage(5),  grabPage(6),  grabPage(7), 
@@ -45,6 +46,7 @@ function generate() {
       }
       pdf.save("myFamilyCalendar.pdf");
       document.getElementsByClassName('overlay-message')[0].innerHTML = "Done!";
+      // document.getElementById("loader").style.display = "none";
     },
     // if not successful
     function(errorArray) {

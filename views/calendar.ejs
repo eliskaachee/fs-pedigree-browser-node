@@ -18,13 +18,14 @@
     <div class="overlay-message">
       <p>Click here to save a PDF version of your calendar</p>
       <button onclick="generate()">Generate PDF</button>
+      <div id="loader"></div>
     </div>
     <div class="calendar">
       <div class="front-cover page">
         <div class="front-cover-text-wrapper">
           <div class="front-cover-text">
             <h1>My Family Calendar</h1>
-            <h2><%- new Date().getFullYear() %></h2>
+            <h2><%- year %></h2>
           </div>
         </div>
         <!-- <img class="cover-photo" src="/cover-photo.jpg" alt="cover photo" /> -->
@@ -35,30 +36,39 @@
           <img class="top-photo" src="/top-photos/<%- calendar[month].monthName %>.jpg" alt="<%- calendar[month].monthName %> photo" />
         </div>
         <div class="bottom-page page" style="background-image: url('/top-photos-originals/<%- calendar[month].monthName %>.jpg')">
-        <div class="month">
-          <% var weekCount = 1; %>
-          <div class="week">
-            <% for(var fillerDay = 0; fillerDay < calendar[month].firstDayOfMonth; fillerDay++) { %>
-              <div class="day"></div>
-            <% } %>
-            <% for(var day = 1; day <= calendar[month].numDaysInMonth; day++) { %>
-              <!-- check to see if it would be the end of the week based on the offset of the first day of the month -->
-              <% if((day + calendar[month].firstDayOfMonth - 1) % 7 === 0) { 
-                weekCount++; %>
-                </div>
-                <div class="week">
-              <% } %>
-              <div class="day">
-                <span class="dayNumber"><%- day %>
-                <% for (var dayWithEvents in calendar[month].dates) {
-                  if((' ' + day) === dayWithEvents) { %>
-                    <% for(var event in calendar[month].dates[dayWithEvents]) { %>
-                      <!-- This handles main holidays, so the are next to the date number. There will be a maximum of one per day, and it will always be listed first -->
-                      <% if((event == 0) && (calendar[month].dates[dayWithEvents][event].type === 'holiday')) { %>
-                        <%- calendar[month].dates[dayWithEvents][event].name %></span>
-                      <% } else { %>
-                      </span>
-                      <% if(event < 2) { %>
+          <div class="month">
+            <div class="week day-titles">
+              <div class="day day-title">Sunday</div>
+              <div class="day day-title">Monday</div>
+              <div class="day day-title">Tuesday</div>
+              <div class="day day-title">Wednesday</div>
+              <div class="day day-title">Thursday</div>
+              <div class="day day-title">Friday</div>
+              <div class="day day-title">Saturday</div>
+            </div>
+            <% var weekCount = 1; %>
+            <div class="week">
+              <% for(var fillerDay = 0; fillerDay < calendar[month].firstDayOfMonth; fillerDay++) { %>
+                <div class="day"></div>
+                <% } %>
+                <% for(var day = 1; day <= calendar[month].numDaysInMonth; day++) { %>
+                  <!-- check to see if it would be the end of the week based on the offset of the first day of the month -->
+                  <% if((day + calendar[month].firstDayOfMonth - 1) % 7 === 0) { 
+                    weekCount++; %>
+                  </div>
+                  <div class="week">
+                <% } %>
+                <div class="day">
+                  <span class="dayNumber"><%- day %>
+                    <% for (var dayWithEvents in calendar[month].dates) {
+                      if((' ' + day) === dayWithEvents) { %>
+                        <% for(var event in calendar[month].dates[dayWithEvents]) { %>
+                          <!-- This handles main holidays, so the are next to the date number. There will be a maximum of one per day, and it will always be listed first -->
+                          <% if((event == 0) && (calendar[month].dates[dayWithEvents][event].type === 'holiday')) { %>
+                            <%- calendar[month].dates[dayWithEvents][event].name %></span>
+                          <% } else { %>
+                          </span>
+                          <% if(event < 2) { %>
                       <div class="event">
                         <%- calendar[month].dates[dayWithEvents][event].name %>
                         <% if(calendar[month].dates[dayWithEvents][event].type === 'birth') { %>

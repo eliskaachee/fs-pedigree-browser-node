@@ -20,7 +20,7 @@ router.get('/calendar', function(req, res){
 * Creates the basic calendar object and calculates the number of days in the month
 * and the offset of the first day of the month. The "date" array is filled in later. 
 **/
-function setUpCalendar() {
+function setUpCalendar(calendarYear) {
   calendar = [
     {'monthName': 'January',   'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
     {'monthName': 'February',  'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}},
@@ -36,9 +36,9 @@ function setUpCalendar() {
     {'monthName': 'December',  'numDaysInMonth': 0, 'firstDayOfMonth': 0, dates :{}}
   ];
   for(month in calendar) {
-    var date = new Date();
+    // var date = new Date();
     var currentMonth = Number(month);
-    var year = date.getFullYear();
+    var year = calendarYear;
     var numDaysInMonth = new Date(year, currentMonth + 1, 0).getDate();
     var firstDayOfMonth = new Date(year, currentMonth, 1).getDay();
     calendar[month].numDaysInMonth = numDaysInMonth;
@@ -46,17 +46,16 @@ function setUpCalendar() {
   }
 }
 
-function addUSNationalHolidays() {
+function addUSNationalHolidays(calendarYear) {
   // The year could be anything, but it looks for a three part year, so something has to be there
   addEventToCalendar("New Year's Day", "1 January 0000", null, null, "holiday");
   addEventToCalendar("Independence Day", "4 July 0000", null, null, "holiday");
   addEventToCalendar("Veterans Day", "11 November 0000", null, null, "holiday");
-  var mothersDay = new Date("May 8").getDate() - new Date("May 8").getDay() + 0;
+  var mothersDay = new Date("May 8 " + calendarYear).getDate() - new Date("May 8 " + calendarYear).getDay() + 0;
   addEventToCalendar("Mother's Day", mothersDay + " May 0000", null, null, "holiday");
-  var fathersDay = new Date("June 22").getDate() - new Date("June 22").getDay() + 0;
+  var fathersDay = new Date("June 22 " + calendarYear).getDate() - new Date("June 22 " + calendarYear).getDay() + 0;
   addEventToCalendar("Father's Day", fathersDay + " June 0000", null, null, "holiday");
-  // TODO: Calculate Thanksgiving Day, Memorial Day, Father's Day, and Mother's Day
-  var thanksgivingDay = new Date("November 22").getDate() - new Date("November 22").getDay() + 4;
+  var thanksgivingDay = new Date("November 22 " + calendarYear).getDate() - new Date("November 22 " + calendarYear).getDay() + 4;
   addEventToCalendar("Thanksgiving Day", thanksgivingDay + " November 0000", null, null, "holiday");
   addEventToCalendar("Christmas Eve", "24 December 0000", null, null, "holiday");
   addEventToCalendar("Christmas Day", "25 December 0000", null, null, "holiday");
@@ -143,9 +142,9 @@ router.get('/:personId', function(req, res, next) {
         if(error || response.statusCode !== 200){
           return callback(error || restError(response));
         }
-        setUpCalendar();
+        setUpCalendar(req.query.calendarYear);
         if(req.query.USNationalHolidays) {
-          addUSNationalHolidays();
+          addUSNationalHolidays(req.query.calendarYear);
         }
         response.data.persons.forEach(function(person) {
           //Get birth date
@@ -180,7 +179,7 @@ router.get('/:personId', function(req, res, next) {
     if(error){
       next(error);
     } else {
-      res.render('calendar', {'calendar': results.calendar});
+      res.render('calendar', {'calendar': results.calendar, 'year': req.query.calendarYear});
     }
   });
 });

@@ -7,7 +7,7 @@
     <title><%= title %></title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel='stylesheet' href='/stylesheets/logged-out.css' />
+    <link rel='stylesheet' href='/stylesheets/calendar-options.css' />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js" ></script>
   </head>
@@ -15,15 +15,24 @@
     <div id="overlay-message">
     <div id="main">
       <div class="container">
-        <div class="text-center">
+        <div class="title">
           <h2>Personalize your Calendar</h2>
           <p>Then hit "View Calendar" to create your Family Calendar</p>
-          <form action="/calendar/<%-userId%>" method="get">
-            <p>Add LDS Church History Dates? <input type="checkbox" id="churchHistoryDates" name="churchHistoryDates"></p>
-            <p>Add US National Holidays? <input type="checkbox" id="USNationalHolidays" name="USNationalHolidays"></p>
-            <input class="submit-button" type="submit" value="View Calendar">
-          </form>
         </div>
+        <form class="options" action="/calendar/<%-userId%>" method="get">
+          <p><input type="checkbox" id="churchHistoryDates" name="churchHistoryDates"> Add LDS Church History Dates?</p>
+          <p><input type="checkbox" id="USNationalHolidays" name="USNationalHolidays"> Add US National Holidays?</p>
+          <p> Select Year:
+            <select id="calendarYear" name="calendarYear" >
+              <% var currentYear = new Date().getFullYear();
+              console.log(currentYear);
+              for(var year = currentYear - 2; year < currentYear + 5; year++) { %>
+                <option value="<%- year %>" <% if(year === currentYear) { %>selected<% } %>><%- year %></option> 
+              <% } %>
+            </select>
+          </p>
+          <input class="submit-button" type="submit" value="View Calendar">
+        </form>
       </div>
     </div>
   </body>

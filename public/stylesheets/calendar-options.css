@@ -7,17 +7,20 @@ body {
 }
 
 .container {
-  max-width: 1024px;
-  margin: auto;
-}
-
-.text-center {
-  max-width: 550px;
+  max-width: 500px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 60px;
-  padding: 40px;
   background: rgba(256, 256, 256, 0.8);
+  padding: 30px 60px;
+}
+
+.title {
+  text-align: left;
+}
+
+.options {
+  text-align: left;
 }
 
 .submit-button {
