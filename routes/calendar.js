@@ -5,6 +5,7 @@ var async = require('async');
 var util = require('util');
 // Holds the calendar dates
 var calendar;
+var numEvents = 0;
 
 // Setup the FS sdk client before handling any requests on this router.
 router.use(require('../middleware/fs-client'));
@@ -120,6 +121,7 @@ function addEventToCalendar(name, date, ascendancyNumber, gender, type) {
         // if there is a match
         if ((Math.floor(calendar[eventDate.getMonth()].dates[dayString][event].ascendancyNumber / 2) === Math.floor(ascendancyNumber / 2)) && (calendar[eventDate.getMonth()].dates[dayString][event].type === "marriage")){
           calendar[eventDate.getMonth()].dates[dayString][event].name += (" and " + name);
+          numEvents--; // this event was counted twice
         } else { // it is a marriage event that is not in the calendar yet
           calendar[eventDate.getMonth()].dates[dayString].push(eventInfo);
         }
@@ -150,18 +152,24 @@ router.get('/:personId', function(req, res, next) {
           //Get birth date
           if(person.display.birthDate) {
             if(isValid(person.display.birthDate)) {
+              numEvents++;
+              // console.log(person.display.birthDate);
               addEventToCalendar(person.display.name, person.display.birthDate, person.display.ascendancyNumber, person.display.gender, "birth");
           }
           }
           //Get marriage date
           if(person.display.marriageDate) {
             if(isValid(person.display.marriageDate)) {
+              numEvents++;
+              // console.log(person.display.marriageDate);
               addEventToCalendar(person.display.name, person.display.marriageDate, person.display.ascendancyNumber, person.display.gender, "marriage");
             }
           }
           //Get death date
           if(person.display.deathDate) {
             if(isValid(person.display.deathDate)) {
+              numEvents++;
+              // console.log(person.display.deathDate);
               addEventToCalendar(person.display.name, person.display.deathDate, person.display.ascendancyNumber, person.display.gender, "death");
             }
           }
@@ -179,7 +187,7 @@ router.get('/:personId', function(req, res, next) {
     if(error){
       next(error);
     } else {
-      res.render('calendar', {'calendar': results.calendar, 'year': req.query.calendarYear});
+      res.render('calendar', {'calendar': results.calendar, 'year': req.query.calendarYear, 'numEvents': numEvents, 'familyName': req.session.user.familyName});
     }
   });
 });

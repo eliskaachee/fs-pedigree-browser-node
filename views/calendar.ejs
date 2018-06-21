@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><%= title %></title>
+    <title><%- title %></title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel='stylesheet' href='/stylesheets/calendar.css' />
@@ -15,8 +15,14 @@
   </head>
   <body>
     <div class="calendar-wrapper">
+    <div class="error-message">
+    </div>
     <div class="overlay-message">
       <p>Click here to save a PDF version of your calendar</p>
+      <p class="disclaimer">To create the best calendar, view on a desktop computer at full screen</p>
+      <% if(numEvents < 1) { %>
+      <p class="no-valid-dates">We could not find any valid dates in your family tree to put on the calendar. <a href="http://www.familysearch.org/tree">Click here</a> to add some.</p>
+      <% } %>
       <button onclick="generate()">Generate PDF</button>
       <div id="loader"></div>
     </div>
@@ -24,12 +30,10 @@
       <div class="front-cover page">
         <div class="front-cover-text-wrapper">
           <div class="front-cover-text">
-            <h1>My Family Calendar</h1>
+            <h1>The <%- familyName %> Family Calendar</h1>
             <h2><%- year %></h2>
           </div>
         </div>
-        <!-- <img class="cover-photo" src="/cover-photo.jpg" alt="cover photo" /> -->
-
       </div>
       <% for(var month in calendar) { %>
         <div class="top-page page">

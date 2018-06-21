@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><%= title %></title>
+    <title><%- title %></title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel='stylesheet' href='/stylesheets/calendar-options.css' />
@@ -26,6 +26,7 @@
             <select id="calendarYear" name="calendarYear" >
               <% var currentYear = new Date().getFullYear();
               console.log(currentYear);
+              <!-- Display a range of two years before and five years afterward as options -->
               for(var year = currentYear - 2; year < currentYear + 5; year++) { %>
                 <option value="<%- year %>" <% if(year === currentYear) { %>selected<% } %>><%- year %></option> 
               <% } %>
