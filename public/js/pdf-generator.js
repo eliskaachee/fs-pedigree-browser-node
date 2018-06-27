@@ -7,7 +7,7 @@ function grabPage(pageIndex) {
     var newPage;
     html2canvas(document.getElementsByClassName('page')[pageIndex], {
       onrendered: function(canvas) {
-        newPage = canvas.toDataURL('image/jpeg', 1.0);
+        newPage = canvas.toDataURL('image/jpeg', 5.0);
         if (newPage == undefined) {
           console.log("There was an error retrieving a calendar page");
           reject();
@@ -37,9 +37,9 @@ function generate() {
   Promise.all(calendarPagePromiseArray).then(
     //if successful
     function(pageArray) {
-      var pdf = new jsPDF('landscape', 'mm', 'a4');
+      var pdf = new jsPDF('landscape', 'mm', 'letter');
       for(var i = 0; i < pageArray.length; i++) {
-        pdf.addImage(pageArray[i], 'JPEG', 0, 0, 300, pdf.internal.pageSize.height);
+        pdf.addImage(pageArray[i], 'png', 0, 0, pdf.internal.pageSize.width, pdf.internal.pageSize.height);
         if(i < pageArray.length - 1) {
           pdf.addPage();
         }
